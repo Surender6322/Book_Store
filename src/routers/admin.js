@@ -11,13 +11,13 @@ const {
 } = require("../controllers/admin");
 
 //Register Librarian
-router.post("/librarian/register", register);
+router.post("/admin/register", register);
 
 //Login users
-router.post("/librarian/login", login);
+router.post("/admin/login", login);
 
 //Logout User
-router.post("/librarian/logout", auth, logout);
+router.post("/admin/logout", auth, logoutAllAdmin);
 
 //Get all users
 router.get("/users/all", auth, getuser);

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 
 module.exports = (sequelize, DataTypes) => {
-  const Librarian = sequelize.define("librarian", {
+  const Admin = sequelize.define("admin", {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  Librarian.beforeCreate(async (user, options) => {
+  Admin.beforeCreate(async (user, options) => {
     user.name = user.name.trim();
     user.email = user.email.trim();
     user.password = user.password.trim();
@@ -55,55 +55,55 @@ module.exports = (sequelize, DataTypes) => {
     user.tokens = JSON.stringify([]);
   });
 
-  Librarian.beforeUpdate(async (user, options) => {
+  Admin.beforeUpdate(async (user, options) => {
     if (user.changed("password")) {
       user.password = user.password.trim();
       user.password = await bcrypt.hash(user.password, 8);
     }
   });
 
-  Librarian.prototype.generateToken = async function () {
-    const librarian = this;
-    const token = jwt.sign({ id: librarian.id.toString(),userType:"librarian" }, "secret_secret");
+  Admin.prototype.generateToken = async function () {
+    const admin = this;
+    const token = jwt.sign({ id: admin.id.toString(),userType:"admin" }, "secret_secret");
 
     // Get the current tokens as an array
-    let tokens = JSON.parse(librarian.tokens || "[]");
+    let tokens = JSON.parse(admin.tokens || "[]");
 
     // Add a new token object
     tokens.push({ token });
 
     // Update the 'tokens' field with the updated array by serializing it back to a string
-    librarian.tokens = JSON.stringify(tokens);
+    admin.tokens = JSON.stringify(tokens);
 
     // Save the updated tokens back to the database
-    await librarian.save();
+    await admin.save();
 
     return token;
   };
 
-  Librarian.findByCredentials = async(name, password) => {
-    const librarian = await Librarian.findOne({where :{name}})
-    if(!librarian){
+  Admin.findByCredentials = async(name, password) => {
+    const admin = await Admin.findOne({where :{name}})
+    if(!admin){
       throw new Error("Unable to login !!")
     }
 
-    const isMatch = await bcrypt.compare(password, librarian.password)
+    const isMatch = await bcrypt.compare(password, admin.password)
 
     if(!isMatch){
       throw new Error("Unable to login !!")
     }
-    return librarian;
+    return admin;
   }
 
-  // Librarian.prototype.toJSON = function () {
-  //   const values = Object.assign({}, this.get());
-  //   console.log(values)
-  //   delete values.password;          //deleted password from the response
-  //   delete values.tokens;
-  //   return values;
-  // };
+  Admin.prototype.toJSON = function () {
+    const values = { ...this.get() };
+    console.log(values)
+    delete values.password;        
+    delete values.tokens;
+    return values;
+  };
 
 
-   return Librarian;
+   return Admin;
 };
 
