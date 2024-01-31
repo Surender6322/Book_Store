@@ -4,25 +4,25 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    publicationYear:{
+    publicationYear: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    cost:{
-      type: DataTypes.DECIMAL(10,2) ,//10 digits in total with 2 decimal places
-      allowNull:false,
-      validate:{
-        isDecimal:true,
-        min:0,
-      }
+    cost: {
+      type: DataTypes.DECIMAL(10, 2), //10 digits in total with 2 decimal places
+      allowNull: false,
+      validate: {
+        isDecimal: true,
+        min: 0,
+      },
     },
-    copies:{
-        type:DataTypes.INTEGER,
-        allownull:false,
-        validate: {
-          isInt: true, // Ensure it is an integer
-          min: 0, // Minimum value allowed is 0
-        },
+    copies: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      validate: {
+        isInt: true, // Ensure it is an integer
+        min: 0, // Minimum value allowed is 0
+      },
     },
   });
   return Book;

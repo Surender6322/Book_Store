@@ -25,7 +25,7 @@ db.Sequelize = Sequelize
 //require models
 db.user=require('../models/user')(sequelize,DataTypes)
 db.books=require('../models/books')(sequelize,DataTypes)
-db.librarian=require('../models/librarian')(sequelize,DataTypes)
+db.admin=require('../models/admin')(sequelize,DataTypes)
 db.categories=require('../models/categories')(sequelize,DataTypes)
 db.bookcategory=require('../models/bookcategory')(sequelize,DataTypes)
 db.author=require('../models/author')(sequelize,DataTypes)
