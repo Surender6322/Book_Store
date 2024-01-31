@@ -1,9 +1,9 @@
-module.exports= (sequelize,DataTypes)=>{
-    const language=sequelize.define("language",{
-    name: {
-      type:DataTypes.STRING,
-      allowNull:false,
-     }
-  })
-    return language;
-}
+module.exports = (sequelize, DataTypes) => {
+  const language = sequelize.define("language", {
+    lang: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });
+  return language;
+};
