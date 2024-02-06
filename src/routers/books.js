@@ -3,7 +3,7 @@ const express = require("express");
 
 const router = new express.Router();
 
-const {addBook,library,addLanguage,addCategory}=require('../controllers/books')
+const {addBook,library,addLanguage,addCategory,addAuthor}=require('../controllers/books')
 
 //Add
 router.post('/book/add',auth,addBook)
