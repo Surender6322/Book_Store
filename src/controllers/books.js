@@ -44,10 +44,14 @@ const library = async (req, res) => {
     let filters = {};
 
     // category as multiselect filter
-    if (categories && Array.isArray(categories) && categories.length > 0) {
-      filters.name = {
-        [Op.in]: categories,
-      };
+    if (categories) {
+      if (Array.isArray(categories) && categories.length > 0) {
+        filters.name = {
+          [Op.in]: categories,
+        };
+      } else {
+        filters.name = categories;
+      }
     }
 
     // publication year range filter
@@ -103,10 +107,14 @@ const library = async (req, res) => {
     }
 
     // languages as multiselect filter
-    if (languages && Array.isArray(languages) && languages.length > 0) {
-      filters.lang = {
-        [Op.in]: languages,
-      };
+    if (languages) {
+      if (Array.isArray(languages) && languages.length > 0) {
+        filters.lang = {
+          [Op.in]: languages,
+        };
+      } else {
+        filters.lang = languages;
+      }
     }
 
     const books = await Books.findAll({
