@@ -12,7 +12,7 @@ router.post('/book/add',auth,addBook)
 router.get('/books',library)
 
 //adding author
-router.post('/author/add', addAuthor);
+router.post('/author/add', auth , addAuthor);
 
 // Language
 router.post("/language/add",auth,addLanguage)
