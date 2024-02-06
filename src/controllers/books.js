@@ -8,6 +8,36 @@ const Languages = db.language;
 
 //const { Sequelize } = require('sequelize');
 
+const addLanguage = async(req,res) => {
+  try{
+    if (!req.admin) {
+    return res
+      .status(403)
+      .json({ error: "Access forbidden. Only admin can add books." });
+  }
+  }catch(e){
+    res.status(500).json({message : e})
+  }
+}
+
+const addCategory = async(req,res) => {
+  if (!req.admin) {
+    return res
+      .status(403)
+      .json({ error: "Access forbidden. Only admin can add books." });
+  }
+  try{
+    
+    const newCategory = await Categories.create(req.body);
+
+    res
+      .status(201)
+      .json({ message: "Book created successfully", Category: newCategory });
+  }catch(e){
+    res.status(500).json({message : e})
+  }
+}
+
 const addBook = async (req, res) => {
   if (!req.admin) {
     return res
@@ -112,4 +142,4 @@ const library = async (req, res) => {
   }
 };
 
-module.exports = { addBook, library };
+module.exports = { addBook, library,addLanguage,addCategory };
