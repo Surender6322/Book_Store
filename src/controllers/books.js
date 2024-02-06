@@ -7,6 +7,7 @@ const Author = db.author;
 const Languages = db.language;
 const BookCategory = db.bookcategory
 const BookLanguage = db.booklanguage
+const BookAuthor = db.bookauthor;
 
 //const { Sequelize } = require('sequelize');
 
