@@ -64,7 +64,9 @@ module.exports = (sequelize, DataTypes) => {
 
   Admin.prototype.generateToken = async function () {
     const admin = this;
-    const token = jwt.sign({ id: admin.id.toString(),userType:"admin" }, "secret_secret");
+
+    
+    const token = jwt.sign({ id: admin.id.toString(), userType:"admin" }, process.env.JWT_SECRET);
 
     // Get the current tokens as an array
     let tokens = JSON.parse(admin.tokens || "[]");
@@ -81,8 +83,8 @@ module.exports = (sequelize, DataTypes) => {
     return token;
   };
 
-  Admin.findByCredentials = async(name, password) => {
-    const admin = await Admin.findOne({where :{name}})
+  Admin.findByCredentials = async(email, password) => {
+    const admin = await Admin.findOne({where :{email}})
     if(!admin){
       throw new Error("Unable to login !!")
     }
@@ -97,7 +99,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Admin.prototype.toJSON = function () {
     const values = { ...this.get() };
-    console.log(values)
+
     delete values.password;        
     delete values.tokens;
     return values;

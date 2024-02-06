@@ -11,11 +11,13 @@ router.post('/book/add',auth,addBook)
 //Library 
 router.get('/books',library)
 
-//Language
+//adding author
+router.post('/add', addAuthor);
+
+// Language
 router.post("/language/add",auth,addLanguage)
 
 //Category
 router.post("/category/add",auth,addCategory)
-
 
 module.exports=router
