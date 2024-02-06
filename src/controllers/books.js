@@ -8,6 +8,7 @@ const Languages = db.language;
 const BookCategory = db.bookcategory
 const BookLanguage = db.booklanguage
 const BookAuthor = db.bookauthor;
+const {Op} = require('sequelize')
 
 //const { Sequelize } = require('sequelize');
 
@@ -122,22 +123,32 @@ const library = async (req, res) => {
       maxPublicationYear,
       minCost,
       maxCost,
-      minRating,
       minOrderDate,
       maxOrderDate,
       languages,
+      authorName
     } = req.query;
 
-    let filters = {};
+    let filters = {}
+    let categoryFilters = {};
+    let languageFilters = {};
+    let authorFilters = {}
+    let orderFilters = {}
 
     // Apply filters based on query parameters
 
     // Apply category filter
+    console.log(categories)
     if (categories) {
-      filters.name = {
-        [Op.in]: Array.isArray(categories) ? categories : [categories],
-      };
+      if (Array.isArray(categories) && categories.length > 0){
+        categoryFilters.name = {
+          [Op.in]: categories
+        }
+      }else{
+        categoryFilters.name = categories
+      }
     }
+    console.log(filters)
 
     // Apply publication year filter
     if (minPublicationYear || maxPublicationYear) {
@@ -162,34 +173,49 @@ const library = async (req, res) => {
     }
 
     // Apply rating filter
-    if (minRating) {
-      filters.rating = {
-        [Op.gte]: minRating,
-      };
-    }
+    // if (minRating) {
+    //   filters.rating = {
+    //     [Op.gte]: minRating,
+    //   };
+    // }
 
     // Apply order date filter
     if (minOrderDate || maxOrderDate) {
-      filters.order_date = {};
+      orderFilters.order_date = {};
       if (minOrderDate) {
-        filters.order_date[Op.gte] = minOrderDate;
+        orderFilters.order_date[Op.gte] = minOrderDate;
       }
       if (maxOrderDate) {
-        filters.order_date[Op.lte] = maxOrderDate;
+        orderFilters.order_date[Op.lte] = maxOrderDate;
       }
     }
 
     // Apply language filter
     if (languages) {
-      filters.lang = {
-        [Op.in]: Array.isArray(languages) ? languages : [languages],
-      };
+      if (Array.isArray(languages) && languages.length > 0){
+        languageFilters.lang = {
+          [Op.in] : languages
+        }
+      }else{
+        languageFilters.lang = languages
+      }
+    }
+
+    // apply filter on author
+    if (authorName){
+      if (Array.isArray(authorName) && authorName.length>0){
+        authorFilters.name = {
+          [Op.in] : authorName
+        }
+      }else{
+        authorFilters.name = authorName
+      }
     }
 
     // Find books with applied filters
     const books = await Books.findAll({
-      where: filters,
-      include: [Languages, Reviews, Categories, Orders],
+      where : filters,
+      include: [{model : Languages, where : languageFilters}, {model : Categories, where : categoryFilters},  {model : Author, where : authorFilters}],
     });
 
     res.send({ books });
