@@ -8,6 +8,7 @@ const Languages = db.language;
 
 //const { Sequelize } = require('sequelize');
 
+
 const addBook = async (req, res) => {
   if (!req.admin) {
     return res
@@ -112,4 +113,30 @@ const library = async (req, res) => {
   }
 };
 
-module.exports = { addBook, library };
+
+
+const addAuthor = async (req, res) => {
+    try {
+        const { name, gender } = req.body;
+
+        // Check if an author with the same name already exists
+        const existingAuthor = await Author.findOne({ where: { name } });
+
+        if (existingAuthor) {
+            return res.status(400).json({ error: 'Author with the same name already exists.' });
+        }
+
+        // If the author doesn't exist, create a new one
+        const newAuthor = await Author.create({ name, gender });
+
+        res.status(201).json(newAuthor);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+
+
+module.exports = { addBook, library, addAuthor };
