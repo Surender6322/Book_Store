@@ -9,23 +9,31 @@ const BookAuthor = db.bookauthor;
 
 //const { Sequelize } = require('sequelize');
 
+//Add Language
 const addLanguage = async(req,res) => {
-  try{
-    if (!req.admin) {
+  if (!req.admin) {
     return res
       .status(403)
-      .json({ error: "Access forbidden. Only admin can add books." });
+      .json({ error: "Access forbidden. Only admin can add Language" });
   }
+  try{
+    const newLanguage = await Languages.create(req.body);
+
+    res
+      .status(201)
+      .json({ message: "Langauge created successfully", Language: newLanguage });
+
   }catch(e){
     res.status(500).json({message : e})
   }
 }
 
+//Add Category
 const addCategory = async(req,res) => {
   if (!req.admin) {
     return res
       .status(403)
-      .json({ error: "Access forbidden. Only admin can add books." });
+      .json({ error: "Access forbidden. Only admin can add Category" });
   }
   try{
     
@@ -33,13 +41,37 @@ const addCategory = async(req,res) => {
 
     res
       .status(201)
-      .json({ message: "Book created successfully", Category: newCategory });
+      .json({ message: "Category created successfully", Category: newCategory });
   }catch(e){
     res.status(500).json({message : e})
   }
 }
 
+//Add Author
+
+const addAuthor = async (req, res) => {
+  try {
+      const { name, gender } = req.body;
+
+      // Check if an author with the same name already exists
+      const existingAuthor = await Author.findOne({ where: { name } });
+
+      if (existingAuthor) {
+          return res.status(400).json({ error: 'Author with the same name already exists.' });
+      }
+
+      // If the author doesn't exist, create a new one
+      const newAuthor = await Author.create({ name, gender });
+
+      res.status(201).json(newAuthor);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 const addBook = async (req, res) => {
+
   if (!req.admin) {
       return res.status(403).json({ error: "Access forbidden. Only admin can add books." });
   }
@@ -67,6 +99,8 @@ const addBook = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+
 // get books
 const library = async (req, res) => {
   try {
@@ -153,4 +187,4 @@ const library = async (req, res) => {
   }
 };
 
-module.exports = { addBook, library,addLanguage,addCategory };
+module.exports = { addBook, library, addLanguage, addCategory,addAuthor };
