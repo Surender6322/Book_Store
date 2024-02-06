@@ -40,22 +40,32 @@ const addCategory = async(req,res) => {
 
 const addBook = async (req, res) => {
   if (!req.admin) {
-    return res
-      .status(403)
-      .json({ error: "Access forbidden. Only admin can add books." });
+      return res.status(403).json({ error: "Access forbidden. Only admin can add books." });
   }
-  try {
-    const newBook = await Books.create(req.body);
 
-    res
-      .status(201)
-      .json({ message: "Book created successfully", book: newBook });
+  try {
+      // Extract book details from the request body
+      const { title, publicationYear, cost, copies, authorId } = req.body;
+
+      // Check if the author with the given ID exists
+      const existingAuthor = await Author.findByPk(authorId);
+
+      if (!existingAuthor) {
+          return res.status(404).json({ error: 'Author with the provided ID does not exist.' });
+      }
+
+      // Create a new book
+      const newBook = await Books.create({ title, publicationYear, cost, copies });
+
+      // Create an entry in the bookauthor table to establish the many-to-many relationship
+      await BookAuthor.create({ bookId: newBook.id, authorId });
+
+      res.status(201).json({ message: "Book created successfully", book: newBook });
   } catch (error) {
-    console.error("Error adding book:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+      console.error("Error adding book:", error);
+      res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 // get books
 const library = async (req, res) => {
   try {
