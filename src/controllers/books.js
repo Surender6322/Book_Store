@@ -5,6 +5,8 @@ const Reviews = db.reviews;
 const Categories = db.categories;
 const Author = db.author;
 const Languages = db.language;
+const BookCategory = db.bookcategory
+const BookLanguage = db.booklanguage
 
 //const { Sequelize } = require('sequelize');
 
@@ -45,8 +47,12 @@ const addBook = async (req, res) => {
 
   try {
       // Extract book details from the request body
-      const { title, publicationYear, cost, copies, authorId } = req.body;
+      const { title, publicationYear, cost, copies, authorId,languageId,categoryId } = req.body;
 
+      const existingLanguage = await Languages.findByPk(languageId)
+      if (!existingLanguage){
+        return res.status(404).json({ error: 'Language with the provided ID does not exist.' });
+      }
       // Check if the author with the given ID exists
       const existingAuthor = await Author.findByPk(authorId);
 
@@ -54,10 +60,16 @@ const addBook = async (req, res) => {
           return res.status(404).json({ error: 'Author with the provided ID does not exist.' });
       }
 
+      const existingCategory = await Categories.findByPk(categoryId)
+      if(!existingCategory) {
+        return res.status(404).json({ error: 'Category with the provided ID does not exist.' });
+      }
       // Create a new book
       const newBook = await Books.create({ title, publicationYear, cost, copies });
-
+      
       // Create an entry in the bookauthor table to establish the many-to-many relationship
+      await BookLanguage.create({bookId:newBook.id,languageId})
+      await BookCategory.create({bookId:newBook.id,categoryId})
       await BookAuthor.create({ bookId: newBook.id, authorId });
 
       res.status(201).json({ message: "Book created successfully", book: newBook });
