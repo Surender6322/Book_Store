@@ -21,9 +21,9 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { name, password } = req.body;
+    const { email, password } = req.body;
 
-    const admin = await Admin.findByCredentials(name, password);
+    const admin = await Admin.findByCredentials(email, password);
     const token = await admin.generateToken();
 
     res.json({ message: "Admin Login successful", admin, token });
